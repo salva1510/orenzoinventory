@@ -118,11 +118,24 @@ $("productRows").addEventListener("click",e=>{
 });
 ["searchInput","categoryFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",render));
 $("showLowBtn").onclick=()=>{$("statusFilter").value="low";render();};
-function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"';}
-$("exportBtn").onclick=()=>{
- const h=["name","category","unit","quantity","reorder","barcode","expiry","notes"];
- const csv=[h.join(","),...products.map(p=>h.map(k=>csvCell(p[k])).join(","))].join("\r\n");
- download(csv,"orenzo-inventory-stock.csv","text/csv;charset=utf-8;");
+$("exportBtn").onclick=async()=>{
+ if(!window.ExcelJS){alert("Hindi pa available ang Excel exporter. I-refresh ang page at subukan ulit.");return;}
+ const workbook=new ExcelJS.Workbook();workbook.creator="Orenzo Inventory Pro";workbook.created=new Date();
+ const grouped=new Map();
+ products.slice().sort((a,b)=>String(a.category||"Uncategorized").localeCompare(String(b.category||"Uncategorized"))||String(a.name||"").localeCompare(String(b.name||""))).forEach(p=>{const c=String(p.category||"Uncategorized").trim()||"Uncategorized";if(!grouped.has(c))grouped.set(c,[]);grouped.get(c).push(p);});
+ const sections=[...grouped.entries()].flatMap(([category,items])=>{const parts=[];for(let i=0;i<items.length;i+=21)parts.push({category,items:items.slice(i,i+21)});return parts;});
+ let sheetNo=1,ws,rowNo=1;
+ const newSheet=()=>{ws=workbook.addWorksheet("Stock "+String(sheetNo++).padStart(2,"0"));ws.columns=[{key:"name",width:42.83},{key:"unit",width:16.83},{key:"stock",width:14.83}];rowNo=1;};
+ newSheet();
+ sections.forEach(section=>{
+  if(rowNo+section.items.length+1>25)newSheet();
+  const title=ws.addRow([section.category]);ws.mergeCells(rowNo,1,rowNo,3);title.height=24;
+  title.getCell(1).font={bold:true,color:{argb:"FF713F12"}};title.getCell(1).fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFF4B183"}};title.getCell(1).alignment={horizontal:"left",vertical:"middle"};rowNo++;
+  const header=ws.addRow(["Name","Unit","Stock"]);header.height=20;
+  header.eachCell(cell=>{cell.font={bold:true,color:{argb:"FF7C2D12"}};cell.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFFCE4D6"}};cell.alignment={horizontal:"center",vertical:"middle"};cell.border={bottom:{style:"thin",color:{argb:"FFD9A078"}}};});rowNo++;
+  section.items.forEach(p=>{const row=ws.addRow([p.name||"",p.unit||"",Number(p.quantity)||0]);row.height=22;row.getCell(1).alignment={horizontal:"left",vertical:"middle"};row.getCell(2).alignment={horizontal:"left",vertical:"middle"};row.getCell(3).alignment={horizontal:"center",vertical:"middle"};rowNo++;});
+ });
+ try{const buffer=await workbook.xlsx.writeBuffer();const blob=new Blob([buffer],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="orenzo-inventory-stock.xlsx";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(err){console.error(err);alert("Hindi nagawa ang Excel export: "+err.message);}
 };
 function download(content,name,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 $("importBtn").onclick=()=>$("csvFile").click();
