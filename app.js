@@ -159,13 +159,29 @@ cloudClient.auth.getSession().then(({data})=>{if(data.session?.user)loadCloudInv
 cloudClient.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session?.user&&currentCloudUser?.id!==session.user.id)loadCloudInventory(session.user);if(event==="SIGNED_OUT"){currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;cloudStatus("Local mode");}});
 
 
-function openQuickMovement(type){
+function renderQuickMovementOptions(){
+ const query=($("quickMovementSearch").value||"").trim().toLowerCase();
  const select=$("quickMovementProduct");
- select.innerHTML=products.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${Number(p.quantity).toLocaleString()} ${esc(p.unit)}</option>`).join("");
+ const previous=select.value;
+ const matches=products.filter(p=>{
+  const haystack=[p.name,p.category,p.barcode,p.unit].map(v=>String(v||"").toLowerCase()).join(" ");
+  return !query||haystack.includes(query);
+ });
+ select.innerHTML=matches.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${Number(p.quantity).toLocaleString()} ${esc(p.unit)}</option>`).join("");
+ if(matches.some(p=>String(p.id)===previous))select.value=previous;
+ $("quickMovementCurrent").textContent=matches.length
+  ? `${matches.length} product(s) found. Select the correct item to continue.`
+  : "Walang product na tumugma sa iyong search.";
+ select.disabled=matches.length===0;
+}
+$("quickMovementSearch").addEventListener("input",renderQuickMovementOptions);
+function openQuickMovement(type){
+ $("quickMovementSearch").value="";
+ renderQuickMovementOptions();
  $("quickMovementTitle").textContent=type==="in"?"Stock In":"Stock Out";
  $("quickMovementDialog").dataset.type=type;
- $("quickMovementCurrent").textContent=products.length?"Select a product, then continue to enter the quantity.":"No products available yet.";
  $("quickMovementDialog").showModal();
+ setTimeout(()=>$("quickMovementSearch").focus(),50);
 }
 $("quickMovementClose").onclick=$("quickMovementCancel").onclick=()=>$("quickMovementDialog").close();
 $("quickMovementForm").onsubmit=e=>{
