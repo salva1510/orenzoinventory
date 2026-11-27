@@ -210,3 +210,14 @@ document.querySelectorAll("[data-nav]").forEach(button=>button.addEventListener(
 }));
 
 render();
+
+const navDock=document.querySelector(".bottom-nav");
+const navToggle=$("navToggle");
+if(navDock&&navToggle){
+ navToggle.addEventListener("click",()=>{
+  const collapsed=navDock.classList.toggle("nav-collapsed");
+  navToggle.setAttribute("aria-label",collapsed?"Show navigation":"Hide navigation");
+  navToggle.title=collapsed?"Show navigation":"Hide navigation";
+  navToggle.querySelector(".nav-toggle-icon").textContent=collapsed?"›":"‹";
+ });
+}
