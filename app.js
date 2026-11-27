@@ -67,7 +67,7 @@ function render(){
   <td data-label="Reorder level">${Number(p.reorder)>0?Number(p.reorder)+" "+esc(p.unit):"Not set"}</td>
   <td data-label="Expiry">${p.expiry?new Date(p.expiry+"T00:00:00").toLocaleDateString():"Not provided"}</td>
   <td data-label="Status"><span class="pill ${cls}">${st}</span></td>
-  <td data-label="Actions"><div class="actions"><button class="mini-btn" data-move="in" data-id="${p.id}">＋ In</button><button class="mini-btn" data-move="out" data-id="${p.id}">− Out</button><button class="mini-btn" data-edit="${p.id}">Edit</button><button class="mini-btn" data-delete="${p.id}">Delete</button></div></td></tr>`;
+  <td data-label="Actions"><div class="actions"><button class="mini-btn" data-edit="${p.id}">Edit</button><button class="mini-btn" data-delete="${p.id}">Delete</button></div></td></tr>`;
  }).join("");
  $("emptyState").hidden=filtered.length>0;
  $("productRows").parentElement.style.display=filtered.length?"":"none";
