@@ -34,12 +34,12 @@ function render(){
  });
  $("productRows").innerHTML=filtered.map(p=>{
   const [st,cls]=statusOf(p);
-  return `<tr><td><div class="product-name">${esc(p.name)}</div><div class="subline">${esc(p.barcode||"Original Excel record")}</div></td>
-  <td>${esc(p.category)}</td><td class="qty">${Number(p.quantity).toLocaleString()} ${esc(p.unit)}</td>
-  <td>${Number(p.reorder)>0?Number(p.reorder)+" "+esc(p.unit):"Not set"}</td>
-  <td>${p.expiry?new Date(p.expiry+"T00:00:00").toLocaleDateString():"Not provided"}</td>
-  <td><span class="pill ${cls}">${st}</span></td>
-  <td><div class="actions"><button class="mini-btn" data-move="in" data-id="${p.id}">＋ In</button><button class="mini-btn" data-move="out" data-id="${p.id}">− Out</button><button class="mini-btn" data-edit="${p.id}">Edit</button><button class="mini-btn" data-delete="${p.id}">Delete</button></div></td></tr>`;
+  return `<tr><td data-label="Product"><div class="product-name">${esc(p.name)}</div><div class="subline">${esc(p.barcode||"Original Excel record")}</div></td>
+  <td data-label="Category">${esc(p.category)}</td><td data-label="On hand" class="qty">${Number(p.quantity).toLocaleString()} ${esc(p.unit)}</td>
+  <td data-label="Reorder level">${Number(p.reorder)>0?Number(p.reorder)+" "+esc(p.unit):"Not set"}</td>
+  <td data-label="Expiry">${p.expiry?new Date(p.expiry+"T00:00:00").toLocaleDateString():"Not provided"}</td>
+  <td data-label="Status"><span class="pill ${cls}">${st}</span></td>
+  <td data-label="Actions"><div class="actions"><button class="mini-btn" data-move="in" data-id="${p.id}">＋ In</button><button class="mini-btn" data-move="out" data-id="${p.id}">− Out</button><button class="mini-btn" data-edit="${p.id}">Edit</button><button class="mini-btn" data-delete="${p.id}">Delete</button></div></td></tr>`;
  }).join("");
  $("emptyState").hidden=filtered.length>0;
  $("productRows").parentElement.style.display=filtered.length?"":"none";
