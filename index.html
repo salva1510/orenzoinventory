@@ -18,7 +18,7 @@
   <header class="topbar">
     <div class="brand"><div class="brand-mark">O</div><div><strong>ORENZO</strong><small>INVENTORY PRO</small></div></div>
     <div class="top-actions">
-      <button class="btn btn-ghost" id="installAppBtn" type="button" hidden>Install App</button>
+      <span id="cloudStatus" class="cloud-status">Local mode</span><button class="btn btn-ghost" id="cloudLoginBtn" type="button">Login / Sync</button><button class="btn btn-ghost" id="cloudSignOutBtn" type="button" hidden>Sign out</button><button class="btn btn-ghost" id="installAppBtn" type="button" hidden>Install App</button>
       <button class="btn btn-ghost" id="importBtn">Import CSV</button>
       <button class="btn btn-gold" id="addProductBtn">＋ Add Product</button>
       <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
@@ -94,6 +94,8 @@
     </form>
   </dialog>
 
+  <dialog id="cloudAuthDialog"><form method="dialog"><div class="dialog-head"><div><p class="eyebrow">CLOUD ACCOUNT</p><h2>Sign in to Orenzo Inventory</h2></div><button type="button" class="close-btn" id="cloudAuthClose">×</button></div><p class="muted">Gamitin ang parehong account sa laptop at cellphone para makita ang iisang inventory.</p><label>Email<input id="cloudEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label><label>Password<input id="cloudPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters"></label><div class="dialog-actions"><button type="button" class="btn btn-outline" id="cloudAuthCancel">Cancel</button><button type="button" class="btn btn-outline" id="cloudCreateBtn">Create Account</button><button type="button" class="btn btn-gold" id="cloudSignInBtn">Sign In</button></div></form></dialog>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="pwa-register.js" defer></script>
   <script src="app.js"></script>
 </body>
