@@ -533,3 +533,26 @@ nav.bottom-nav>.bottom-nav-item .nav-icon{font-size:20px!important;line-height:1
   min-height:68px!important;
  }
 }
+
+
+/* Desktop navigation: fill the available left rail vertically, below the header */
+@media(min-width:601px){
+ nav.bottom-nav{
+  position:fixed!important;
+  left:0!important;right:auto!important;
+  top:88px!important;bottom:18px!important;
+  width:76px!important;max-width:76px!important;
+  height:auto!important;
+  display:flex!important;flex-direction:column!important;
+  justify-content:space-evenly!important;align-items:stretch!important;
+  gap:4px!important;
+  padding:12px 8px!important;
+  box-sizing:border-box!important;
+ }
+ nav.bottom-nav>.bottom-nav-item{
+  flex:1 1 0!important;
+  min-height:0!important;
+  max-height:110px!important;
+  justify-content:center!important;
+ }
+}
