@@ -20,7 +20,7 @@
   <main class="shell">
     <section class="welcome">
       <div><p class="eyebrow">STOCK CONTROL CENTER</p><h1>Inventory Overview</h1><p class="muted">Manage products, stock movement, and expiry dates in one place.</p></div>
-      <button class="btn btn-outline" id="exportBtn">↓ Export CSV</button>
+      <div class="welcome-actions"><button class="btn btn-outline" id="historyBtn">↻ Stock History</button><button class="btn btn-outline" id="exportBtn">↓ Export CSV</button></div>
     </section>
 
     <section class="stats">
@@ -35,6 +35,10 @@
       <button class="text-btn" id="showLowBtn">View low stock →</button>
     </section>
 
+    <section class="consumables-alert" id="consumablesAlert" hidden><div><strong>⚠ CONSUMABLES ALERT</strong><p id="consumablesAlertText">Consumables at or below reorder level.</p></div><button class="text-btn" id="showConsumablesBtn">View consumables →</button></section>
+
+    <section class="history-panel panel" id="historyPanel" hidden><div class="panel-head"><div><h2>Stock Movement History</h2><p class="muted">Latest stock in and stock out activity on this browser.</p></div><button class="btn btn-outline" id="closeHistoryBtn">Close</button></div><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Product</th><th>Movement</th><th>Quantity</th><th>Reference / Note</th></tr></thead><tbody id="historyRows"></tbody></table><div class="empty" id="historyEmpty">No stock movement recorded yet.</div></div></section>
+
     <section class="panel">
       <div class="panel-head">
         <div><h2>Product Stock</h2><p class="muted">Search and manage your inventory records.</p></div>
@@ -42,7 +46,7 @@
           <input id="searchInput" class="search" placeholder="Search product or barcode…" aria-label="Search products">
           <select id="categoryFilter" aria-label="Filter category"><option value="">All categories</option></select>
           <select id="statusFilter" aria-label="Filter status">
-            <option value="all">All stock</option><option value="low">Low stock</option><option value="expired">Expired</option><option value="expiring">Expiring in 30 days</option>
+            <option value="all">All stock</option><option value="consumables">Consumables alert</option><option value="low">Low stock</option><option value="expired">Expired</option><option value="expiring">Expiring in 30 days</option>
           </select>
         </div>
       </div>

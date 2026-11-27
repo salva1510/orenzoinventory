@@ -6,3 +6,6 @@
 
 /* Ensure hidden alerts and empty states remain hidden when custom display rules exist. */
 [hidden]{display:none!important}
+
+.welcome-actions{display:flex;gap:8px;flex-wrap:wrap}.consumables-alert{display:flex;align-items:center;gap:14px;justify-content:space-between;background:#fff0f0;border:1px solid #efb3b3;border-left:5px solid #d52e2e;padding:14px 16px;border-radius:12px;margin-bottom:18px;color:#a51f1f}.consumables-alert strong{font-size:13px;letter-spacing:.5px}.consumables-alert p{font-size:12px;margin:4px 0 0;color:#9e3c3c}.consumables-alert .text-btn{color:#b51f1f}.history-panel{margin-bottom:18px}.history-panel[hidden]{display:none!important}.history-panel .panel-head{padding-bottom:16px}.history-panel table{min-width:620px}
+@media(max-width:560px){.welcome{flex-direction:column}.welcome-actions{width:100%}.welcome-actions .btn{flex:1}.consumables-alert{align-items:flex-start;flex-direction:column}.consumables-alert .text-btn{margin-left:0;padding:0}}
