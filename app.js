@@ -8,7 +8,35 @@ if (!Array.isArray(products)) {
 }
 const today=()=>new Date(new Date().toDateString());
 const dateDiff=d=>Math.ceil((new Date(d+"T00:00:00")-today())/86400000);
-const save=()=>{localStorage.setItem(STORAGE_KEY,JSON.stringify(products));render();};
+
+let cloudClient=null,currentCloudUser=null,cloudSyncBusy=false;
+const cloudStatus=(message,connected=false)=>{const el=$("cloudStatus");if(el){el.textContent=message;el.classList.toggle("connected",connected);}};
+const cloudRow=p=>({id:String(p.id),user_id:currentCloudUser.id,name:p.name,category:p.category||"",unit:p.unit||"pcs",quantity:Number(p.quantity)||0,reorder:Number(p.reorder)||0,barcode:p.barcode||"",expiry:p.expiry||null,notes:p.notes||""});
+async function loadCloudInventory(user){
+ currentCloudUser=user;$("cloudLoginBtn").hidden=true;$("cloudSignOutBtn").hidden=false;cloudStatus("Loading cloud…");
+ const {data,error}=await cloudClient.from("products").select("*").eq("user_id",user.id).order("created_at",{ascending:true});
+ if(error){cloudStatus("Cloud error");alert("Hindi mabasa ang cloud inventory: "+error.message);return;}
+ if(data.length){
+  products=data.map(r=>({id:r.id,name:r.name,category:r.category,unit:r.unit,quantity:Number(r.quantity),reorder:Number(r.reorder),barcode:r.barcode||"",expiry:r.expiry||"",notes:r.notes||""}));
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(products));render();cloudStatus("Cloud connected · "+products.length+" products",true);
+ }else if(products.length){
+  cloudStatus("Migrating local products…");
+  const {error:uploadError}=await cloudClient.from("products").upsert(products.map(cloudRow),{onConflict:"user_id,id"});
+  if(uploadError){cloudStatus("Sync error");alert("Hindi na-upload ang local inventory: "+uploadError.message);return;}
+  cloudStatus("Cloud connected · "+products.length+" products",true);
+ }else cloudStatus("Cloud connected · 0 products",true);
+}
+async function syncCloudInventory(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(products));render();
+ if(!cloudClient||!currentCloudUser||cloudSyncBusy)return;
+ cloudSyncBusy=true;cloudStatus("Saving cloud…");
+ const rows=products.map(cloudRow);
+ const {error}=rows.length?await cloudClient.from("products").upsert(rows,{onConflict:"user_id,id"}):{error:null};
+ cloudSyncBusy=false;
+ if(error){cloudStatus("Sync error");console.error(error);alert("Na-save locally pero pumalya ang cloud sync: "+error.message);}
+ else cloudStatus("Cloud synced · "+products.length+" products",true);
+}
+const save=()=>{syncCloudInventory();};
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function statusOf(p){
  if(p.expiry && dateDiff(p.expiry)<0)return ["Expired","expired"];
@@ -79,7 +107,7 @@ $("productRows").addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;
  if(b.dataset.move){movementType=b.dataset.move;openMovement(b.dataset.id,b.dataset.move);}
  if(b.dataset.edit)openProduct(products.find(p=>p.id===b.dataset.edit));
- if(b.dataset.delete&&confirm("Delete this product record?")){products=products.filter(p=>p.id!==b.dataset.delete);save();}
+ if(b.dataset.delete&&confirm("Delete this product record?")){const deletedId=b.dataset.delete;products=products.filter(p=>p.id!==deletedId);if(currentCloudUser){cloudClient.from("products").delete().eq("user_id",currentCloudUser.id).eq("id",deletedId).then(({error})=>{if(error)alert("Cloud delete failed: "+error.message);});}save();}
 });
 ["searchInput","categoryFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",render));
 $("showLowBtn").onclick=()=>{$("statusFilter").value="low";render();};
@@ -103,4 +131,31 @@ $("csvFile").onchange=async e=>{
  save();alert(`${added} product(s) imported.`);e.target.value="";
 };
 function parseCSV(s){const rows=[];let row=[],field="",quoted=false;for(let i=0;i<s.length;i++){const c=s[i],n=s[i+1];if(c==='"'&&quoted&&n==='"'){field+='"';i++;}else if(c==='"')quoted=!quoted;else if(c===","&&!quoted){row.push(field);field="";}else if((c==="\n"||c==="\r")&&!quoted){if(c==="\r"&&n==="\n")i++;row.push(field);rows.push(row);row=[];field="";}else field+=c;}if(field.length||row.length){row.push(field);rows.push(row);}return rows;}
+
+const SUPABASE_URL="https://ndkczlqytrlifllhviuw.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_f1Zyc666UANVU4ekOb86sQ_PuqPKeUg";
+cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+$("cloudLoginBtn").onclick=()=>$("cloudAuthDialog").showModal();
+$("cloudAuthClose").onclick=$("cloudAuthCancel").onclick=()=>$("cloudAuthDialog").close();
+$("cloudSignInBtn").onclick=async()=>{
+ const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;
+ if(!email||!password){alert("Ilagay ang email at password.");return;}
+ cloudStatus("Signing in…");
+ const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
+ if(error){cloudStatus("Not connected");alert(error.message);return;}
+ $("cloudAuthDialog").close();await loadCloudInventory(data.user);
+};
+$("cloudCreateBtn").onclick=async()=>{
+ const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;
+ if(!email||password.length<6){alert("Ilagay ang valid email at password na hindi bababa sa 6 characters.");return;}
+ cloudStatus("Creating account…");
+ const {data,error}=await cloudClient.auth.signUp({email,password});
+ if(error){cloudStatus("Not connected");alert(error.message);return;}
+ if(data.session&&data.user){$("cloudAuthDialog").close();await loadCloudInventory(data.user);}
+ else{cloudStatus("Check your email");alert("Nagawa na ang account. Kumpirmahin muna ang email, pagkatapos ay mag-sign in.");}
+};
+$("cloudSignOutBtn").onclick=async()=>{await cloudClient.auth.signOut();currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;cloudStatus("Local mode");};
+cloudClient.auth.getSession().then(({data})=>{if(data.session?.user)loadCloudInventory(data.session.user);});
+cloudClient.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session?.user&&currentCloudUser?.id!==session.user.id)loadCloudInventory(session.user);if(event==="SIGNED_OUT"){currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;cloudStatus("Local mode");}});
+
 render();
