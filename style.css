@@ -502,3 +502,21 @@ nav.bottom-nav>.bottom-nav-item .nav-icon{font-size:20px!important;line-height:1
  nav.bottom-nav>.bottom-nav-item{min-height:50px!important;font-size:9px!important}
  nav.bottom-nav>.bottom-nav-item .nav-icon{font-size:19px!important}
 }
+
+
+/* Layout correction: keep header full-width and reserve space only for desktop content */
+@media(min-width:601px){
+ body{padding-left:0!important;padding-bottom:18px!important}
+ .topbar{width:100%!important;margin-left:0!important}
+ .shell{
+  width:min(1240px,calc(100% - 120px))!important;
+  max-width:1240px!important;
+  margin-left:max(100px,calc((100% - 1240px)/2))!important;
+  margin-right:auto!important;
+ }
+}
+@media(max-width:600px){
+ body{padding-left:0!important}
+ .topbar{width:100%!important;margin-left:0!important}
+ .shell{width:100%!important;margin-left:auto!important;margin-right:auto!important}
+}
