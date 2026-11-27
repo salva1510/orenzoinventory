@@ -659,3 +659,13 @@ nav.bottom-nav.nav-collapsed>.nav-toggle{
 .table-wrap .mini-btn.icon-action.danger-action{color:#b33b35;background:#fffafa;border-color:#f0d5d2}
 .table-wrap .mini-btn.icon-action:hover{transform:translateY(-1px);box-shadow:0 3px 9px #9c7b3020}
 @media(max-width:600px){.brand-mark .ui-icon{width:21px;height:21px}.nav-icon .ui-icon{width:21px;height:21px}.table-wrap .mini-btn.icon-action{width:31px;height:30px}}
+
+/* Single-account access gate */
+body.auth-locked>.topbar,body.auth-locked>.shell,body.auth-locked>.bottom-nav,body.auth-locked>.footnote{display:none!important}
+body.auth-locked{overflow:hidden!important}
+#cloudAuthDialog[open]{z-index:99999}
+body.auth-locked #cloudAuthDialog{width:min(460px,calc(100% - 28px))}
+body.auth-locked #cloudAuthDialog::backdrop{background:#11151ddd;backdrop-filter:blur(8px)}
+body.auth-locked #cloudAuthDialog form{padding:28px}
+body.auth-locked #cloudAuthDialog .close-btn,body.auth-locked #cloudAuthCancel{display:none!important}
+body.auth-locked #cloudEmail{background:#f8f4e9;color:#795a16;font-weight:700}
