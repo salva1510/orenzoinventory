@@ -97,6 +97,7 @@
   <dialog id="quickMovementDialog">
     <form id="quickMovementForm" method="dialog">
       <div class="dialog-head"><div><p class="eyebrow">STOCK CONTROL</p><h2 id="quickMovementTitle">Stock In</h2></div><button type="button" class="close-btn" id="quickMovementClose" aria-label="Close">×</button></div>
+      <label>Search product<input id="quickMovementSearch" type="search" placeholder="Type product name or barcode..." autocomplete="off"></label>
       <label>Select product<select id="quickMovementProduct" required></select></label>
       <p class="muted" id="quickMovementCurrent">Choose a product to continue.</p>
       <div class="dialog-actions"><button type="button" class="btn btn-outline" id="quickMovementCancel">Cancel</button><button type="submit" class="btn btn-gold">Continue</button></div>
@@ -112,6 +113,6 @@
   </nav>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="pwa-register.js" defer></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=stock-search-20261127"></script>
 </body>
 </html>
