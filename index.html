@@ -28,7 +28,7 @@
   <main class="shell">
     <section class="welcome">
       <div><p class="eyebrow">STOCK CONTROL CENTER</p><h1>Inventory Overview</h1><p class="muted">Manage products, stock movement, and expiry dates in one place.</p></div>
-      <button class="btn btn-outline" id="exportBtn"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m-4-4 4 4 4-4"/><path d="M4 18v2h16v-2"/></svg>Export CSV</button>
+      <button class="btn btn-outline" id="exportBtn"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m-4-4 4 4 4-4"/><path d="M4 18v2h16v-2"/></svg>Export Excel</button>
     </section>
 
     <section class="stats">
@@ -112,8 +112,9 @@
     <button type="button" class="bottom-nav-item" data-nav="expiry"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M12 13v3l2 1"/></svg></span><span>Expiry</span></button>
     <button type="button" class="bottom-nav-item" data-nav="account"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span><span>Account</span></button>
   </nav>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="pwa-register.js" defer></script>
-  <script src="app.js?v=single-owner-20261127"></script>
+  <script src="app.js?v=excel-export-template-20261127"></script>
 </body>
 </html>
