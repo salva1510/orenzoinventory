@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171717">
+  <title>Orenzo Inventory Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">O</div><div><strong>ORENZO</strong><small>INVENTORY PRO</small></div></div>
+    <div class="top-actions">
+      <button class="btn btn-ghost" id="importBtn">Import CSV</button>
+      <button class="btn btn-gold" id="addProductBtn">＋ Add Product</button>
+      <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="welcome">
+      <div><p class="eyebrow">STOCK CONTROL CENTER</p><h1>Inventory Overview</h1><p class="muted">Manage products, stock movement, and expiry dates in one place.</p></div>
+      <button class="btn btn-outline" id="exportBtn">↓ Export CSV</button>
+    </section>
+
+    <section class="stats">
+      <article class="stat-card"><span>Total Products</span><strong id="totalProducts">0</strong><small>Unique product records</small></article>
+      <article class="stat-card"><span>Total Stock Units</span><strong id="totalUnits">0</strong><small>Combined on-hand quantity</small></article>
+      <article class="stat-card warning"><span>Low Stock</span><strong id="lowCount">0</strong><small>At or below reorder level</small></article>
+      <article class="stat-card danger"><span>Expired Items</span><strong id="expiredCount">0</strong><small>Past expiry date</small></article>
+    </section>
+
+    <section class="alert-strip" id="alertStrip" hidden>
+      <span class="alert-icon">!</span><div><strong>Stock attention required</strong><p id="alertText"></p></div>
+      <button class="text-btn" id="showLowBtn">View low stock →</button>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div><h2>Product Stock</h2><p class="muted">Search and manage your inventory records.</p></div>
+        <div class="filters">
+          <input id="searchInput" class="search" placeholder="Search product or barcode…" aria-label="Search products">
+          <select id="categoryFilter" aria-label="Filter category"><option value="">All categories</option></select>
+          <select id="statusFilter" aria-label="Filter status">
+            <option value="all">All stock</option><option value="low">Low stock</option><option value="expired">Expired</option><option value="expiring">Expiring in 30 days</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>Category</th><th>On hand</th><th>Reorder level</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="productRows"></tbody>
+        </table>
+        <div class="empty" id="emptyState"><div class="empty-icon">▤</div><strong>No products yet</strong><p>Add your first product or import a CSV stock list.</p><button class="btn btn-gold" id="emptyAddBtn">＋ Add Product</button></div>
+      </div>
+    </section>
+    <p class="footnote">Orenzo Inventory Pro · Starter version · Data is saved in this browser only.</p>
+  </main>
+
+  <dialog id="productDialog">
+    <form id="productForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">PRODUCT RECORD</p><h2 id="dialogTitle">Add Product</h2></div><button type="button" class="close-btn" id="closeDialog" aria-label="Close">×</button></div>
+      <input type="hidden" id="productId">
+      <div class="form-grid">
+        <label class="wide">Product name<input id="name" required maxlength="100" placeholder="e.g. Dairy Essence Cheese 2kg"></label>
+        <label>Category<select id="category"><option>Cheese</option><option>Dairy</option><option>Grocery</option><option>Snacks</option><option>Consumables</option><option>Others</option></select></label>
+        <label>Barcode / SKU<input id="barcode" placeholder="Optional"></label>
+        <label>Quantity on hand<input id="quantity" type="number" min="0" step="1" value="0" required></label>
+        <label>Reorder stock<input id="reorder" type="number" min="0" step="1" value="5" required></label>
+        <label>Unit<select id="unit"><option>pcs</option><option>box</option><option>pack</option><option>tub</option><option>kg</option><option>liter</option></select></label>
+        <label>Expiry date<input id="expiry" type="date"></label>
+        <label class="wide">Notes<textarea id="notes" rows="2" placeholder="Optional product details"></textarea></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="btn btn-outline" id="cancelDialog">Cancel</button><button type="submit" class="btn btn-gold">Save Product</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="movementDialog">
+    <form id="movementForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">STOCK MOVEMENT</p><h2 id="movementTitle">Stock In</h2></div><button type="button" class="close-btn" id="closeMovement">×</button></div>
+      <input type="hidden" id="movementProductId">
+      <p class="muted" id="movementProductName"></p>
+      <label>Quantity<input id="movementQty" type="number" min="1" step="1" required value="1"></label>
+      <label>Reference / Note<input id="movementNote" placeholder="e.g. New delivery / Damaged"></label>
+      <div class="dialog-actions"><button type="button" class="btn btn-outline" id="cancelMovement">Cancel</button><button type="submit" class="btn btn-gold">Confirm</button></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
