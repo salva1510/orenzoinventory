@@ -1,41 +1,19 @@
-# Orenzo Inventory Pro
+# Orenzo Inventory Pro — Original Stock Records
 
-A responsive, browser-based inventory stock manager starter project.
+This version is preloaded from the user's uploaded workbook `orenzo-inventory-stock (4).xlsx`.
 
-## Features
-- Add, edit, search, and delete product records
-- Product categories and barcode/SKU field
-- Stock In and Stock Out with quantity validation
-- Reorder-level / low-stock status
-- Expiry date monitoring (expired and expiring within 30 days)
-- CSV import and export
-- Responsive layout for desktop, tablet, and mobile
-- Browser localStorage persistence
+## Imported data
+- 380 product/unit records
+- 28,319 total stock units (sum of the Stock column)
+- Original product names, categories, units, and quantities preserved
+- Duplicate product names with different units are retained as separate records
+- Expiry dates, reorder levels, barcodes, costs, and prices were not present in the uploaded workbook and are therefore left blank / not set
 
-## Run locally
-Open `index.html` in a modern browser. No build step is required.
+## Run
+Open `index.html` in a modern browser.
 
-## Publish with GitHub Pages
-1. Upload `index.html`, `style.css`, `app.js`, and `README.md` to the root of your GitHub repository.
-2. Open **Settings → Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch**.
-4. Select branch `main` and folder `/ (root)`, then Save.
-5. Wait for GitHub Pages to publish the site.
+## GitHub Pages
+Upload `index.html`, `style.css`, `app.js`, and `README.md` to the repository root. Then go to Settings → Pages → Deploy from a branch → `main` → `/ (root)`.
 
-## CSV format
-Required columns: `name`, `category`, `quantity`
-
-Optional columns: `barcode`, `reorder`, `unit`, `expiry`, `notes`
-
-Example header:
-```csv
-name,category,barcode,quantity,reorder,unit,expiry,notes
-Dairy Essence Cheese 2kg,Cheese,DE-2KG,104,10,box,2027-07-06,Good stock
-```
-
-## Important data note
-This starter version saves records in the browser's localStorage. Data is not automatically shared between devices or users and can be lost if browser site data is cleared. For a multi-user production inventory system, connect a backend database and authentication (for example, Supabase or Firebase) before using it for live business records.
-
-
-## Preloaded Orenzo records
-On the first launch in a browser with no saved inventory, the app preloads 19 stock rows based on previously supplied Good Stock records. Existing browser data is not overwritten. The available source records do not contain reorder levels, so these are set to 0 rather than guessed. Two mixed-unit records (Conaprole Full Cream Milk and Corn Oil) are split into separate box and pcs rows to preserve their quantities.
+## Data storage
+The app stores changes in browser localStorage. This is not cloud sync. This release uses a new storage key (`orenzo_inventory_true_records_v2`) so the old sample/incorrect records do not overwrite the workbook import.
