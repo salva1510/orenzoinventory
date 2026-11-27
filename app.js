@@ -67,7 +67,7 @@ function render(){
   <td data-label="Reorder level">${Number(p.reorder)>0?Number(p.reorder)+" "+esc(p.unit):"Not set"}</td>
   <td data-label="Expiry">${p.expiry?new Date(p.expiry+"T00:00:00").toLocaleDateString():"Not provided"}</td>
   <td data-label="Status"><span class="pill ${cls}">${st}</span></td>
-  <td data-label="Actions"><div class="actions"><button class="mini-btn" data-edit="${p.id}">Edit</button><button class="mini-btn" data-delete="${p.id}">Delete</button></div></td></tr>`;
+  <td data-label="Actions"><div class="actions"><button class="mini-btn icon-action" data-edit="${p.id}" aria-label="Edit product" title="Edit product"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 16-.8 4.8L8 20l11-11-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="mini-btn icon-action danger-action" data-delete="${p.id}" aria-label="Delete product" title="Delete product"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button></div></td></tr>`;
  }).join("");
  $("emptyState").hidden=filtered.length>0;
  $("productRows").parentElement.style.display=filtered.length?"":"none";
