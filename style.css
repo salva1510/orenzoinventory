@@ -669,3 +669,43 @@ body.auth-locked #cloudAuthDialog::backdrop{background:#11151ddd;backdrop-filter
 body.auth-locked #cloudAuthDialog form{padding:28px}
 body.auth-locked #cloudAuthDialog .close-btn,body.auth-locked #cloudAuthCancel{display:none!important}
 body.auth-locked #cloudEmail{background:#f8f4e9;color:#795a16;font-weight:700}
+
+
+/* Premium Orenzo button motion system */
+:root{--orenzo-gold:#d5a83d;--orenzo-amber:#f0c96a;--orenzo-ink:#33250d}
+.btn,.mini-btn,.bottom-nav-item,.nav-toggle,.filter-chip,.icon-action{
+  position:relative;isolation:isolate;overflow:hidden;
+  transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,background .22s ease,border-color .22s ease,filter .22s ease!important;
+  -webkit-tap-highlight-color:transparent
+}
+.btn:before,.bottom-nav-item:before,.mini-btn:before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(112deg,transparent 18%,rgba(255,255,255,.32) 46%,transparent 72%);
+  transform:translateX(-140%);transition:transform .55s ease
+}
+.btn:hover:before,.bottom-nav-item:hover:before,.mini-btn:hover:before{transform:translateX(140%)}
+.btn:hover,.mini-btn:hover,.bottom-nav-item:hover,.nav-toggle:hover{
+  transform:translateY(-2px);filter:brightness(1.035);
+  box-shadow:0 7px 18px rgba(99,70,16,.14)
+}
+.btn:active,.mini-btn:active,.bottom-nav-item:active,.nav-toggle:active{
+  transform:translateY(1px) scale(.97);box-shadow:0 2px 5px rgba(60,43,12,.12)
+}
+.btn-gold,.btn-primary,.btn:not(.btn-outline):not(.btn-ghost){
+  box-shadow:0 4px 12px rgba(174,127,28,.17)
+}
+.btn-gold:hover,.btn-primary:hover{box-shadow:0 8px 22px rgba(174,127,28,.28)!important}
+.bottom-nav-item .nav-icon{transition:transform .24s cubic-bezier(.2,.8,.2,1),filter .24s ease}
+.bottom-nav-item:hover .nav-icon{transform:translateY(-3px) scale(1.1);filter:drop-shadow(0 3px 3px rgba(190,145,44,.22))}
+.bottom-nav-item.active .nav-icon{animation:orenzoIconPop .32s ease-out}
+.icon-action:hover .ui-icon{transform:scale(1.12);transition:transform .18s ease}
+@keyframes orenzoIconPop{0%{transform:scale(.82)}65%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes orenzoGoldPulse{0%,100%{box-shadow:0 0 0 0 rgba(213,168,61,0)}50%{box-shadow:0 0 0 5px rgba(213,168,61,.12)}}
+#cloudLoginBtn,.btn-gold{animation:orenzoGoldPulse 3.2s ease-in-out infinite}
+.btn:focus-visible,.mini-btn:focus-visible,.bottom-nav-item:focus-visible,.nav-toggle:focus-visible{
+  outline:3px solid rgba(213,168,61,.48);outline-offset:3px
+}
+@media(prefers-reduced-motion:reduce){
+  .btn,.mini-btn,.bottom-nav-item,.nav-toggle,.filter-chip,.icon-action{transition:none!important;animation:none!important}
+  .btn:before,.bottom-nav-item:before,.mini-btn:before{display:none}
+}
