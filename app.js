@@ -158,4 +158,39 @@ $("cloudSignOutBtn").onclick=async()=>{await cloudClient.auth.signOut();currentC
 cloudClient.auth.getSession().then(({data})=>{if(data.session?.user)loadCloudInventory(data.session.user);});
 cloudClient.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session?.user&&currentCloudUser?.id!==session.user.id)loadCloudInventory(session.user);if(event==="SIGNED_OUT"){currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;cloudStatus("Local mode");}});
 
+
+function openQuickMovement(type){
+ const select=$("quickMovementProduct");
+ select.innerHTML=products.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${Number(p.quantity).toLocaleString()} ${esc(p.unit)}</option>`).join("");
+ $("quickMovementTitle").textContent=type==="in"?"Stock In":"Stock Out";
+ $("quickMovementDialog").dataset.type=type;
+ $("quickMovementCurrent").textContent=products.length?"Select a product, then continue to enter the quantity.":"No products available yet.";
+ $("quickMovementDialog").showModal();
+}
+$("quickMovementClose").onclick=$("quickMovementCancel").onclick=()=>$("quickMovementDialog").close();
+$("quickMovementForm").onsubmit=e=>{
+ e.preventDefault();
+ const id=$("quickMovementProduct").value,type=$("quickMovementDialog").dataset.type;
+ $("quickMovementDialog").close();
+ if(id)openMovement(id,type);
+};
+document.querySelectorAll("[data-nav]").forEach(button=>button.addEventListener("click",()=>{
+ const action=button.dataset.nav;
+ document.querySelectorAll(".bottom-nav-item").forEach(item=>item.classList.toggle("active",item===button));
+ if(action==="products"){
+  $("statusFilter").value="all";render();$("searchInput").focus({preventScroll:true});
+  $("productRows").closest(".panel").scrollIntoView({behavior:"smooth",block:"start"});
+ }else if(action==="stock-in"||action==="stock-out"){
+  if(!products.length){alert("Wala pang product records.");return;}
+  openQuickMovement(action==="stock-in"?"in":"out");
+ }else if(action==="expiry"){
+  $("statusFilter").value="expired";render();
+  $("productRows").closest(".panel").scrollIntoView({behavior:"smooth",block:"start"});
+ }else if(action==="account"){
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(!currentCloudUser)$("cloudAuthDialog").showModal();
+  else cloudStatus("Cloud connected · "+products.length+" products",true);
+ }
+}));
+
 render();
