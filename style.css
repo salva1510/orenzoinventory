@@ -520,3 +520,16 @@ nav.bottom-nav>.bottom-nav-item .nav-icon{font-size:20px!important;line-height:1
  .topbar{width:100%!important;margin-left:0!important}
  .shell{width:100%!important;margin-left:auto!important;margin-right:auto!important}
 }
+
+
+/* Lift and slightly expand the desktop navigation dock without touching the page header */
+@media(min-width:601px){
+ nav.bottom-nav{
+  bottom:70px!important;
+  gap:9px!important;
+  padding:14px 8px!important;
+ }
+ nav.bottom-nav>.bottom-nav-item{
+  min-height:68px!important;
+ }
+}
