@@ -16,3 +16,6 @@ This package adds Progressive Web App support to the existing static inventory a
 
 ## Important data note
 This PWA layer does not add cloud sync. Existing inventory records remain in the browser's local storage, as before. Offline mode is intended for reopening the app shell after the first successful online visit; browser storage and cached files can still be cleared by the device/browser.
+
+## Responsive layout
+The dashboard keeps the same structure and content order on desktop, tablet and phone. Cards and controls resize to fit the screen; the product table keeps its full columns and can be swiped horizontally on narrow screens.
