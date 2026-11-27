@@ -150,3 +150,5 @@ table{min-width:760px}
     white-space: normal !important;
   }
 }
+
+.cloud-status{font-size:10px;color:#d8c28b;white-space:nowrap}.cloud-status.connected{color:#8ee0b7}#cloudAuthDialog label{margin-top:14px}#cloudAuthDialog label input{width:100%;border:1px solid #dfe2e7;border-radius:8px;padding:11px;font-size:13px}
