@@ -10,9 +10,16 @@ const today=()=>new Date(new Date().toDateString());
 const dateDiff=d=>Math.ceil((new Date(d+"T00:00:00")-today())/86400000);
 
 let cloudClient=null,currentCloudUser=null,cloudSyncBusy=false;
+const ALLOWED_EMAIL="orenzoinventory@gmail.com";
+document.body.classList.add("auth-locked");
+function lockApp(){document.body.classList.add("auth-locked");}
+function unlockApp(){document.body.classList.remove("auth-locked");}
+function rejectUnauthorized(){currentCloudUser=null;lockApp();cloudStatus("Sign in required");cloudClient.auth.signOut();}
 const cloudStatus=(message,connected=false)=>{const el=$("cloudStatus");if(el){el.textContent=message;el.classList.toggle("connected",connected);}};
 const cloudRow=p=>({id:String(p.id),user_id:currentCloudUser.id,name:p.name,category:p.category||"",unit:p.unit||"pcs",quantity:Number(p.quantity)||0,reorder:Number(p.reorder)||0,barcode:p.barcode||"",expiry:p.expiry||null,notes:p.notes||""});
 async function loadCloudInventory(user){
+ if((user?.email||"").toLowerCase()!==ALLOWED_EMAIL){alert("Access denied. Tanging "+ALLOWED_EMAIL+" lang ang pinapayagang gumamit ng Orenzo Inventory Pro.");rejectUnauthorized();return;}
+ unlockApp();
  currentCloudUser=user;$("cloudLoginBtn").hidden=true;$("cloudSignOutBtn").hidden=false;cloudStatus("Loading cloud…");
  const {data,error}=await cloudClient.from("products").select("*").eq("user_id",user.id).order("created_at",{ascending:true});
  if(error){cloudStatus("Cloud error");alert("Hindi mabasa ang cloud inventory: "+error.message);return;}
@@ -138,25 +145,17 @@ cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 $("cloudLoginBtn").onclick=()=>$("cloudAuthDialog").showModal();
 $("cloudAuthClose").onclick=$("cloudAuthCancel").onclick=()=>$("cloudAuthDialog").close();
 $("cloudSignInBtn").onclick=async()=>{
- const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;
+ const email=$("cloudEmail").value.trim().toLowerCase(),password=$("cloudPassword").value;
+ if(email!==ALLOWED_EMAIL){alert("Tanging "+ALLOWED_EMAIL+" lang ang maaaring mag-sign in.");return;}
  if(!email||!password){alert("Ilagay ang email at password.");return;}
  cloudStatus("Signing in…");
  const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
  if(error){cloudStatus("Not connected");alert(error.message);return;}
  $("cloudAuthDialog").close();await loadCloudInventory(data.user);
 };
-$("cloudCreateBtn").onclick=async()=>{
- const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;
- if(!email||password.length<6){alert("Ilagay ang valid email at password na hindi bababa sa 6 characters.");return;}
- cloudStatus("Creating account…");
- const {data,error}=await cloudClient.auth.signUp({email,password});
- if(error){cloudStatus("Not connected");alert(error.message);return;}
- if(data.session&&data.user){$("cloudAuthDialog").close();await loadCloudInventory(data.user);}
- else{cloudStatus("Check your email");alert("Nagawa na ang account. Kumpirmahin muna ang email, pagkatapos ay mag-sign in.");}
-};
-$("cloudSignOutBtn").onclick=async()=>{await cloudClient.auth.signOut();currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;cloudStatus("Local mode");};
-cloudClient.auth.getSession().then(({data})=>{if(data.session?.user)loadCloudInventory(data.session.user);});
-cloudClient.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session?.user&&currentCloudUser?.id!==session.user.id)loadCloudInventory(session.user);if(event==="SIGNED_OUT"){currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;cloudStatus("Local mode");}});
+$("cloudSignOutBtn").onclick=async()=>{await cloudClient.auth.signOut();currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;lockApp();cloudStatus("Sign in required");$("cloudAuthDialog").showModal();};
+cloudClient.auth.getSession().then(({data})=>{if(data.session?.user)loadCloudInventory(data.session.user);else{$("cloudAuthDialog").showModal();cloudStatus("Sign in required");}});
+cloudClient.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session?.user&&currentCloudUser?.id!==session.user.id)loadCloudInventory(session.user);if(event==="SIGNED_OUT"){currentCloudUser=null;$("cloudSignOutBtn").hidden=true;$("cloudLoginBtn").hidden=false;lockApp();cloudStatus("Sign in required");if(!$("cloudAuthDialog").open)$("cloudAuthDialog").showModal();}});
 
 
 function renderQuickMovementOptions(){
